@@ -330,7 +330,7 @@
             }
 
             #otsLoginShell .newUserLoginBtn::after {
-                content: 'â†’';
+                content: '\\2192';
                 position: absolute;
                 right: 20px;
                 font-size: 18px;
@@ -352,6 +352,98 @@
                 font-weight: 500;
                 text-decoration: none !important;
                 border-bottom: 1px solid #c6c4bd;
+            }
+
+            /* Üyeliksiz devam: giriş butonunun hemen altında, ikinci ana seçenek. */
+            #otsLoginShell .uyeliksizDevamEtDivider {
+                display: flex !important;
+                align-items: center;
+                gap: 12px;
+                margin: 18px 0 !important;
+                color: #96938b;
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: .14em;
+                text-transform: uppercase;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtDividerLine {
+                flex: 1;
+                height: 1px;
+                background: #e2e0da;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn {
+                float: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a {
+                position: relative;
+                display: grid !important;
+                grid-template-columns: 44px minmax(0, 1fr) 20px;
+                align-items: center;
+                gap: 3px 14px;
+                width: 100% !important;
+                min-height: 72px;
+                margin: 0 !important;
+                padding: 13px 18px 13px 14px !important;
+                color: #0c154c !important;
+                text-align: left;
+                text-decoration: none !important;
+                cursor: pointer;
+                border: 1.5px solid #0c154c !important;
+                border-radius: 12px !important;
+                background: #f2f4fa !important;
+                box-shadow: 0 10px 24px rgba(12,21,76,.08);
+                transition: transform .2s, background .2s, box-shadow .2s !important;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a::before {
+                content: '';
+                grid-column: 1;
+                grid-row: 1 / span 2;
+                width: 44px;
+                height: 44px;
+                border-radius: 11px;
+                background: #0c154c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7h14l1 14H4L5 7Z'/%3E%3Cpath d='M8 8V6a4 4 0 0 1 8 0v2'/%3E%3C/svg%3E") center / 22px no-repeat;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a::after {
+                content: '\\2192';
+                grid-column: 3;
+                grid-row: 1 / span 2;
+                font-size: 18px;
+                transition: transform .2s;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a > span {
+                grid-column: 2;
+                color: #0c154c !important;
+                font: 800 14px 'DM Sans', sans-serif !important;
+                letter-spacing: .02em;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn .ots-guest-note {
+                grid-column: 2;
+                color: #5c6584 !important;
+                font: 500 11.5px/1.4 'DM Sans', sans-serif !important;
+                letter-spacing: 0;
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a:hover {
+                background: #e7ebf6 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 14px 30px rgba(12,21,76,.13);
+            }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a:hover::after { transform: translateX(4px); }
+
+            #otsLoginShell .uyeliksizDevamEtBtn a:focus-visible {
+                outline: 3px solid rgba(12,21,76,.25);
+                outline-offset: 2px;
             }
 
             #otsLoginShell .socialMediaLoginButtons {
@@ -549,6 +641,24 @@
             };
             normalizeLoginButton();
             window.setTimeout(normalizeLoginButton, 800);
+        }
+
+        // --- Üyeliksiz devam butonu ---
+        // Açıklama satırı eklenir; bağlantı klavyeyle de kullanılabilir hale getirilir.
+        var guestLink = shell.querySelector('.uyeliksizDevamEtBtn a');
+        if (guestLink && !guestLink.querySelector('.ots-guest-note')) {
+            var guestNote = document.createElement('span');
+            guestNote.className = 'ots-guest-note';
+            guestNote.textContent = 'Üye olmadan, birkaç adımda siparişini tamamla.';
+            guestLink.appendChild(guestNote);
+            guestLink.setAttribute('role', 'button');
+            guestLink.setAttribute('tabindex', '0');
+            guestLink.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    guestLink.click();
+                }
+            });
         }
 
         [email, password].forEach(function (input) {
@@ -1031,7 +1141,7 @@
             }
 
             #otsRegisterShell #btnSave::after {
-                content: 'â†’';
+                content: '\\2192';
                 position: absolute;
                 right: 20px;
                 font-size: 18px;
@@ -2353,7 +2463,7 @@
             .ots-bank-primary-label { display: block; margin-bottom: 9px; color: rgba(255,255,255,.55); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
             .ots-bank-name { display: block; margin-bottom: 22px; font: 600 21px 'Manrope', sans-serif; letter-spacing: -.02em; line-height: 1.22; }
             .ots-bank-currency { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; color: rgba(255,255,255,.88); font-size: 12px; border: 1px solid rgba(255,255,255,.20); border-radius: 99px; }
-            .ots-bank-currency::before { content: 'â‚º'; display: grid; place-items: center; width: 18px; height: 18px; color: #1a2357; font-weight: 700; border-radius: 50%; background: #fff; }
+            .ots-bank-currency::before { content: '\\20BA'; display: grid; place-items: center; width: 18px; height: 18px; color: #1a2357; font-weight: 700; border-radius: 50%; background: #fff; }
             .ots-bank-details { display: grid; grid-template-columns: 1fr; padding: 13px 25px; }
             .ots-bank-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 18px; align-items: start; padding: 15px 0; border-bottom: 1px solid #eceef6; }
             .ots-bank-row:last-child { border-bottom: 0; }
