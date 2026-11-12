@@ -5118,6 +5118,10 @@
  *
  * Başlıktaki sepet ön izlemesini ürün görselleri, adet, fiyat ve toplam alanlarıyla düzenler.
  * Sepet ve alışverişi tamamlama düğmelerini okunabilir, mobil uyumlu biçimde gösterir.
+ * Başlıkta toplam ürün adedini gösterir; mobilde temanın gri "SepetUst" alanını gizler,
+ * ürün listesini başlık ile toplam arasında kaydırır, toplam ve düğmeleri sabit tutar,
+ * sepet açıkken sticky sepet/WhatsApp/yukarı çık düğmelerini sepetin altında bırakır.
+ * Ticimax'ın silme sonrası boş (null) sepet yanıtından doğan konsol hatalarını önler.
  * ====================================================================== */
 (function () {
     'use strict';
@@ -5160,21 +5164,144 @@
 .ots-dropdown-cart .divustSepetteUrunYok { list-style:none; margin:0!important; padding:32px 24px!important; color:#697386; text-align:center; font-size:14px; line-height:1.7; }
 .ots-dropdown-cart.ots-cart-is-empty .SPrice,.ots-dropdown-cart.ots-cart-is-empty > a.headerOrderBtn { display:none!important; }
 .ots-dropdown-cart a:focus-visible { outline:2px solid #4b9bb7!important; outline-offset:-2px; }
+.ots-dropdown-cart .ots-cart-count { display:inline-flex; align-items:center; min-height:22px; padding:2px 9px; border-radius:999px; background:#eef1f8; color:#0c154c; font-size:12px; font-weight:700; letter-spacing:0; white-space:nowrap; }
+.ots-dropdown-cart .ots-cart-count:empty { display:none; }
+.ots-dropdown-cart .ots-cart-close { display:none; align-items:center; justify-content:center; width:34px; height:34px; margin:-6px -8px -6px auto; padding:0; border:0; border-radius:8px; background:transparent; color:#0c154c; cursor:pointer; }
+.ots-dropdown-cart .ots-cart-close svg { width:20px; height:20px; }
+.ots-dropdown-cart .ots-cart-close:hover { background:#f0f3f8; }
 @media(max-width:480px) { .CartProduct.ots-dropdown-cart { width:calc(100vw - 24px)!important; } .ots-dropdown-cart .SProduct { max-height:40vh; } }
+@media(max-width:767px) {
+  .CartProduct.ots-dropdown-cart > .SepetUst { display:none!important; }
+  .CartProduct.ots-dropdown-cart { display:flex!important; flex-direction:column; }
+  .ots-dropdown-cart .ots-cart-heading { flex:none; }
+  .ots-dropdown-cart .ots-cart-close { display:inline-flex; }
+  .ots-dropdown-cart .SProduct, .ots-dropdown-cart .divustSepetteUrunYok { flex:1 1 auto; min-height:0; max-height:none!important; float:none!important; }
+  .ots-dropdown-cart .SProduct { scrollbar-width:thin; scrollbar-color:#0c154c #edf0f5; }
+  .ots-dropdown-cart .SProduct::-webkit-scrollbar { width:5px; }
+  .ots-dropdown-cart .SProduct::-webkit-scrollbar-track { background:#edf0f5; border-radius:5px; }
+  .ots-dropdown-cart .SProduct::-webkit-scrollbar-thumb { background:#0c154c; border-radius:5px; }
+  .ots-dropdown-cart .SPrice, .ots-dropdown-cart > a.headerCartBtn, .ots-dropdown-cart > a.headerOrderBtn { flex:none; }
+  .ots-dropdown-cart > a.headerCartBtn { margin-top:14px!important; }
+  .ots-dropdown-cart > a.headerOrderBtn { margin-bottom:16px!important; }
+  body:has(.CartProduct.animated) #header { z-index:2147483200!important; }
+  body:has(.CartProduct.animated) #otsStickyCart,
+  body:has(.CartProduct.animated) .ots-whatsapp-modern,
+  body:has(.CartProduct.animated) #back-to-top { visibility:hidden!important; opacity:0!important; pointer-events:none!important; }
+}
 `;
         document.head.appendChild(style);
     }
+
+    // --- Başlıktaki toplam ürün adedi ---
+    function cartPieceTotal(panel) {
+        var model = window.cart && window.cart.get && window.cart.get.model;
+        var products = model && model.cart && model.cart.products;
+        var total = 0;
+        if (Array.isArray(products)) {
+            products.forEach(function (product) { total += parseFloat(product && product.piece) || 0; });
+            return total;
+        }
+        panel.querySelectorAll('.topCardItem .SepetTopAdet').forEach(function (el) {
+            var match = (el.textContent || '').replace(',', '.').match(/\d+(\.\d+)?/);
+            if (match) total += parseFloat(match[0]) || 0;
+        });
+        return total;
+    }
+    function updateCount(panel) {
+        var badge = panel.querySelector('.ots-cart-count');
+        if (!badge) return;
+        var total = panel.querySelector('.topCardItem') ? cartPieceTotal(panel) : 0;
+        var text = total > 0 ? (Math.round(total * 100) / 100).toLocaleString('tr-TR') + ' ürün' : '';
+        if (badge.textContent !== text) badge.textContent = text;
+    }
+
+    // --- Ticimax sepet silme hatası koruması ---
+    // Ticimax ürün silme yanıtında bazen "cart: null" döndürüyor; bu değer
+    // window.cart.get.model.cart'a yazılınca render.top ve sonraki tüm silme
+    // tıklamaları "Cannot read properties of null" hatasıyla çöküyor.
+    // Boş yanıtı modele yazmadan sepeti sunucudan yeniden yüklüyoruz.
+    var reloading = false;
+    var lastReload = 0;
+    var originalTop = null;
+    function reloadCart() {
+        var get = window.cart && window.cart.get;
+        if (reloading || Date.now() - lastReload < 3000 || !get || typeof get.execute !== 'function') return;
+        reloading = true;
+        lastReload = Date.now();
+        var done = function () {
+            reloading = false;
+            // Sunucu yine boş döndüyse sepet boşalmış demektir; boş sepet görünümünü çiz.
+            if (cartModelBroken()) {
+                window.cart.get.model.cart = { products: [], productsToShow: [], productsToShowCount: 0, campaigns: [], totalAmountStr: '' };
+                if (originalTop) { try { originalTop.call(window.cart.render); } catch (error) { /* yoksay */ } }
+            }
+            schedule();
+        };
+        window.setTimeout(function () { reloading = false; }, 8000);
+        try {
+            if (typeof window.cart.clearCache === 'function') window.cart.clearCache();
+            get.execute(true, done, true);
+        } catch (error) {
+            reloading = false;
+        }
+    }
+    function cartModelBroken() {
+        var model = window.cart && window.cart.get && window.cart.get.model;
+        return !!model && !model.cart;
+    }
+    function guardCartApi() {
+        var api = window.ticimaxApi && window.ticimaxApi.cart;
+        if (api && typeof api.removeProduct === 'function' && !api.removeProduct.__otsSafe) {
+            var originalRemove = api.removeProduct;
+            var safeRemove = function (data, callback) {
+                var args = Array.prototype.slice.call(arguments);
+                if (typeof callback === 'function') {
+                    args[1] = function (response) {
+                        if (response && response.cart) return callback.apply(this, arguments);
+                        reloadCart();
+                    };
+                }
+                return originalRemove.apply(this, args);
+            };
+            safeRemove.__otsSafe = true;
+            api.removeProduct = safeRemove;
+        }
+        var cart = window.cart;
+        if (!cart) return;
+        if (cart.remove && typeof cart.remove.execute === 'function' && !cart.remove.execute.__otsSafe) {
+            var originalExecute = cart.remove.execute;
+            var safeExecute = function () {
+                if (cartModelBroken()) { reloadCart(); return Promise.resolve(); }
+                return originalExecute.apply(this, arguments);
+            };
+            safeExecute.__otsSafe = true;
+            cart.remove.execute = safeExecute;
+        }
+        if (cart.render && typeof cart.render.top === 'function' && !cart.render.top.__otsSafe) {
+            originalTop = cart.render.top;
+            var safeTop = function () {
+                if (cartModelBroken()) { reloadCart(); return; }
+                return originalTop.apply(this, arguments);
+            };
+            safeTop.__otsSafe = true;
+            cart.render.top = safeTop;
+        }
+    }
+
     function refresh() {
         injectStyles();
+        guardCartApi();
         document.querySelectorAll('.CartProduct').forEach(function (panel) {
             panel.classList.add('ots-dropdown-cart');
             panel.classList.toggle('ots-cart-is-empty', !!panel.querySelector('.divustSepetteUrunYok') && !panel.querySelector('.topCardItem'));
             if (!panel.querySelector('.ots-cart-heading')) {
                 var heading = document.createElement('div');
                 heading.className = 'ots-cart-heading';
-                heading.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg><span>Sepetim</span>';
+                heading.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg><span>Sepetim</span><span class="ots-cart-count"></span>' +
+                    '<button type="button" class="seClose ots-cart-close" aria-label="Sepeti kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
                 panel.insertBefore(heading, panel.firstChild);
             }
+            updateCount(panel);
             panel.querySelectorAll('.topCardItem > a[onclick]').forEach(function (link) {
                 if (link.classList.contains('ots-cart-remove')) return;
                 link.classList.add('ots-cart-remove');
@@ -5213,6 +5340,7 @@
         }).observe(document.body, { childList: true, subtree: true });
     }
     window.otsDropdownCartInit = schedule;
+    window.addEventListener('load', guardCartApi);
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 }());
