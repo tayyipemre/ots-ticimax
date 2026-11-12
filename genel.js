@@ -586,6 +586,53 @@
                 .ots-panel-intro { margin-bottom: 25px; }
             }
 
+            /* Mobil: başlık ve giriş metni kaldırılır, form daha sıkı yerleşir,
+               Google ve Facebook butonları yan yana durur. */
+            @media (max-width: 767px) {
+                .ots-login-panel h1,
+                .ots-login-panel .ots-panel-intro { display: none !important; }
+                .ots-login-panel { padding: 24px 18px 26px; }
+                .ots-panel-kicker { margin-bottom: 14px; }
+
+                #otsLoginShell .newUserWrapper { margin-bottom: 12px !important; }
+                #otsLoginShell .newUserWrapper .textbox { height: 52px !important; padding-top: 20px !important; }
+                #otsLoginShell .placeholderLabel { top: 8px !important; }
+                #otsLoginShell .TcxPassEye { top: 15px !important; }
+                #otsLoginShell .forgotpasswordDiv { margin: -2px 0 12px !important; }
+                #otsLoginShell .newUserLoginBtn { height: 50px !important; }
+
+                #otsLoginShell .uyeliksizDevamEtDivider { margin: 14px 0 !important; }
+                #otsLoginShell .uyeliksizDevamEtBtn a {
+                    grid-template-columns: 38px minmax(0, 1fr) 18px;
+                    gap: 2px 12px;
+                    min-height: 62px;
+                    padding: 11px 14px 11px 12px !important;
+                }
+                #otsLoginShell .uyeliksizDevamEtBtn a::before { width: 38px; height: 38px; border-radius: 10px; background-size: 19px; }
+                #otsLoginShell .uyeliksizDevamEtBtn a > span { font-size: 13px !important; }
+                #otsLoginShell .uyeliksizDevamEtBtn .ots-guest-note { font-size: 11px !important; }
+
+                #otsLoginShell .socialMediaLoginButtons {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 8px;
+                    margin-top: 20px !important;
+                    padding-top: 18px;
+                }
+                #otsLoginShell .socialBaglanButton a {
+                    height: 46px !important;
+                    gap: 7px;
+                    padding: 0 8px !important;
+                    font-size: 11px !important;
+                    line-height: 1.2 !important;
+                    text-align: center;
+                }
+                #otsLoginShell .socialBaglanButton svg { flex: none; width: 18px; height: 18px; }
+                #otsLoginShell .socialUserSozlesmeDiv { margin-top: 12px !important; }
+
+                .ots-signup-note { gap: 9px; margin-top: 18px; font-size: 12px; }
+                .ots-signup-note a { height: 38px; }
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 .ots-login-card { animation: none; }
                 #otsLoginShell * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
