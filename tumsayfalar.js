@@ -429,7 +429,7 @@
     'use strict';
 
     var CHECKOUT_PATH = /^\/checkout(?:\/|$)/i;
-    var MODULE_SRC = 'https://cdn.jsdelivr.net/gh/tayyipemre/ots-ticimax@master/sepet.min.js';
+    var MODULE_SRC = 'https://cdn.jsdelivr.net/gh/tayyipemre/ots-ticimax@bd8995d/sepet.min.js';
     var MODULE_SELECTOR = 'script[data-ots-checkout-module="true"]';
 
     /* Scripti yalnızca bir defa ekler. Dinamik scriptlerde `defer` etkisiz
