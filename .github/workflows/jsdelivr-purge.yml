@@ -1,0 +1,41 @@
+# ÖTS İÇ GİYİM - jsDelivr önbellek temizleme
+# master'a her push'ta değişen .js dosyalarının jsDelivr @master önbelleğini temizler.
+# Sitedeki <script src=".../ots-ticimax@master/<ad>.min.js"> etiketleri böylece dakikalar içinde yeni kodu alır.
+name: jsDelivr purge
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch: # Actions sekmesinden elle çalıştırınca tüm dosyaları temizler
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Temizlenecek dosyaları belirle
+        id: files
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && git rev-parse HEAD~1 >/dev/null 2>&1; then
+            FILES=$(git diff --name-only HEAD~1 HEAD -- '*.js')
+          else
+            FILES=$(git ls-files '*.js')
+          fi
+          echo "$FILES"
+          { echo "list<<EOF"; echo "$FILES"; echo "EOF"; } >> "$GITHUB_OUTPUT"
+
+      - name: jsDelivr önbelleğini temizle
+        if: steps.files.outputs.list != ''
+        run: |
+          BASE="https://purge.jsdelivr.net/gh/${{ github.repository }}@master"
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            min="${f%.js}.min.js"
+            for p in "$f" "$min"; do
+              echo "Purge: $p"
+              curl -fsS --retry 3 --retry-delay 5 "$BASE/$p" | head -c 300; echo
+            done
+          done <<< "${{ steps.files.outputs.list }}"
