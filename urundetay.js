@@ -3017,146 +3017,104 @@ body #divKargoBedava { display:none!important; }
         style.textContent = [
             '#otsPaymentOptions, #otsPaymentOptions * { box-sizing: border-box; }',
             '#otsPaymentOptions {',
-            '  --ots-pay-blue: #0c154c;',
-            '  --ots-pay-blue-soft: #eef3ff;',
-            '  --ots-pay-green: #149447;',
-            '  --ots-pay-green-soft: #ecfbf2;',
-            '  --ots-pay-muted: #6f7381;',
+            '  --ots-pay-ink: #0c154c;',
+            '  --ots-pay-muted: #747887;',
             '  width: 100%;',
             '  margin: 0;',
-            '  font-family: Arial, Helvetica, sans-serif;',
+            '  font-family: inherit;',
             '}',
             '#divTabOdemeSecenekleri .ots-payment-native-hidden { display: none !important; }',
             '#divTabOdemeSecenekleri .urunTabAlt { display: block !important; }',
-            '.ots-payment-options-head {',
-            '  display: flex;',
-            '  align-items: flex-end;',
-            '  justify-content: space-between;',
-            '  gap: 16px;',
-            '  margin: 0 0 14px;',
-            '}',
-            '.ots-payment-options-head h3 {',
-            '  margin: 0;',
-            '  color: var(--ots-pay-blue);',
-            '  font-size: clamp(20px, 2vw, 26px);',
-            '  font-weight: 900;',
-            '  line-height: 1.15;',
-            '}',
-            '.ots-payment-options-head span {',
-            '  color: var(--ots-pay-muted);',
-            '  font-size: 13px;',
-            '  font-weight: 700;',
-            '}',
+            // Her kart kendi yumuşak tonunu --tone (vurgu), --tone-bg (zemin), --tone-line (çerçeve) ile alır.
             '.ots-payment-options-grid {',
             '  display: grid;',
             '  grid-template-columns: repeat(2, minmax(0, 1fr));',
-            '  gap: 14px;',
+            '  gap: 12px;',
             '}',
             '.ots-payment-card {',
-            '  position: relative;',
-            '  min-height: 92px;',
+            '  --tone: #0c154c;',
+            '  --tone-bg: #f4f6fb;',
+            '  --tone-line: #e2e6f1;',
             '  display: grid;',
-            '  grid-template-columns: 54px minmax(0, 1fr);',
-            '  gap: 12px;',
+            '  grid-template-columns: 42px minmax(0, 1fr);',
+            '  gap: 14px;',
             '  align-items: center;',
-            '  padding: 12px 14px;',
-            '  overflow: hidden;',
-            '  border: 2px solid rgba(12,21,76,.72);',
-            '  border-radius: 14px;',
-            '  background: linear-gradient(135deg, #fff 0%, #f9fbff 100%);',
-            '  box-shadow: 0 18px 42px rgba(12,21,76,.08);',
+            '  min-height: 84px;',
+            '  padding: 14px 16px;',
+            '  border: 1px solid var(--tone-line);',
+            '  border-radius: 12px;',
+            '  background: var(--tone-bg);',
+            '  transition: border-color .2s ease, box-shadow .2s ease;',
             '}',
-            '.ots-payment-card::after {',
-            '  content: "";',
-            '  position: absolute;',
-            '  width: 130px;',
-            '  height: 130px;',
-            '  right: -66px;',
-            '  bottom: -86px;',
-            '  border-radius: 50%;',
-            '  background: rgba(12,21,76,.035);',
-            '}',
-            '.ots-payment-card.is-card {',
-            '  border-color: rgba(20,148,71,.72);',
-            '  background: linear-gradient(135deg, #fff 0%, #f4fff8 100%);',
-            '  box-shadow: 0 18px 42px rgba(20,148,71,.08);',
-            '}',
-            '.ots-payment-card.is-card::after { background: rgba(20,148,71,.045); }',
+            '.ots-payment-card:hover { box-shadow: 0 6px 18px rgba(12,21,76,.05); }',
+            '.ots-payment-card.is-transfer { --tone: #2f3f86; --tone-bg: #f3f5fc; --tone-line: #dfe4f4; }',
+            '.ots-payment-card.is-card { --tone: #2d7a52; --tone-bg: #f2f8f4; --tone-line: #d9ebe0; }',
+            '.ots-payment-card.is-door-cash { --tone: #8a6a32; --tone-bg: #fbf7f0; --tone-line: #efe4d1; }',
+            '.ots-payment-card.is-door-card { --tone: #5e5390; --tone-bg: #f6f4fb; --tone-line: #e5e1f2; }',
             '.ots-payment-icon {',
-            '  position: relative;',
-            '  z-index: 1;',
-            '  width: 52px;',
-            '  height: 52px;',
+            '  width: 42px;',
+            '  height: 42px;',
             '  display: inline-flex;',
             '  align-items: center;',
             '  justify-content: center;',
-            '  color: var(--ots-pay-blue);',
+            '  color: var(--tone);',
             '  border-radius: 50%;',
-            '  background: var(--ots-pay-blue-soft);',
+            '  background: #fff;',
+            '  box-shadow: inset 0 0 0 1px var(--tone-line);',
             '}',
-            '.ots-payment-card.is-card .ots-payment-icon {',
-            '  color: var(--ots-pay-green);',
-            '  background: var(--ots-pay-green-soft);',
+            '.ots-payment-icon svg { width: 22px; height: 22px; display: block; }',
+            '.ots-payment-copy { min-width: 0; }',
+            '.ots-payment-top {',
+            '  display: flex;',
+            '  align-items: baseline;',
+            '  justify-content: space-between;',
+            '  gap: 10px;',
+            '  margin: 0 0 3px;',
             '}',
-            '.ots-payment-icon svg { width: 31px; height: 31px; display: block; }',
-            '.ots-payment-copy { position: relative; z-index: 1; min-width: 0; }',
             '.ots-payment-title {',
-            '  display: block;',
-            '  margin: 0 0 4px;',
-            '  color: var(--ots-pay-blue);',
-            '  font-size: clamp(14px, 1.25vw, 17px);',
-            '  font-weight: 900;',
-            '  line-height: 1.12;',
+            '  margin: 0;',
+            '  color: var(--ots-pay-ink);',
+            '  font-size: 13px;',
+            '  font-weight: 600;',
+            '  line-height: 1.3;',
             '}',
-            '.ots-payment-card.is-card .ots-payment-title { color: var(--ots-pay-green); }',
             '.ots-payment-price {',
-            '  display: block;',
-            '  margin: 0 0 5px;',
-            '  color: var(--ots-pay-blue);',
-            '  font-size: clamp(22px, 2.25vw, 30px);',
-            '  font-weight: 900;',
-            '  line-height: .95;',
-            '  letter-spacing: -.04em;',
+            '  flex: 0 0 auto;',
+            '  color: var(--tone);',
+            '  font-size: 17px;',
+            '  font-weight: 700;',
+            '  line-height: 1.2;',
+            '  letter-spacing: -.01em;',
+            '  white-space: nowrap;',
             '}',
-            '.ots-payment-card.is-card .ots-payment-price { color: var(--ots-pay-green); }',
-            '.ots-payment-saving {',
-            '  width: max-content;',
-            '  max-width: 100%;',
-            '  display: inline-flex;',
-            '  align-items: center;',
-            '  gap: 8px;',
-            '  margin: 0 0 6px;',
-            '  padding: 5px 8px;',
-            '  color: var(--ots-pay-blue);',
-            '  font-size: 11px;',
-            '  font-weight: 900;',
-            '  line-height: 1;',
-            '  border-radius: 8px;',
-            '  background: #eaf0ff;',
-            '}',
-            '.ots-payment-saving svg { width: 14px; height: 14px; stroke: currentColor; }',
             '.ots-payment-desc {',
             '  display: block;',
             '  color: var(--ots-pay-muted);',
-            '  font-size: clamp(11px, 1vw, 13px);',
-            '  font-weight: 700;',
+            '  font-size: 12px;',
+            '  font-weight: 400;',
             '  line-height: 1.45;',
             '}',
-            '@media (max-width: 980px) {',
-            '  .ots-payment-options-grid { grid-template-columns: 1fr; gap: 16px; }',
-            '  .ots-payment-card { min-height: 88px; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; padding: 12px; }',
-            '  .ots-payment-icon { width: 50px; height: 50px; }',
-            '  .ots-payment-icon svg { width: 30px; height: 30px; }',
+            '.ots-payment-saving {',
+            '  display: inline-flex;',
+            '  align-items: center;',
+            '  gap: 5px;',
+            '  margin: 6px 0 0;',
+            '  padding: 3px 8px;',
+            '  color: var(--tone);',
+            '  font-size: 11px;',
+            '  font-weight: 600;',
+            '  line-height: 1.3;',
+            '  border-radius: 999px;',
+            '  background: #fff;',
+            '  box-shadow: inset 0 0 0 1px var(--tone-line);',
             '}',
-            '@media (max-width: 560px) {',
-            '  #otsPaymentOptions { margin: 0; }',
-            '  .ots-payment-options-head { display: block; }',
-            '  .ots-payment-options-head span { display: block; margin-top: 6px; }',
-            '  .ots-payment-card { grid-template-columns: 46px minmax(0, 1fr); gap: 10px; padding: 12px; }',
-            '  .ots-payment-icon { width: 46px; height: 46px; }',
-            '  .ots-payment-icon svg { width: 27px; height: 27px; }',
-            '  .ots-payment-price { font-size: 22px; }',
-            '  .ots-payment-saving { font-size: 10px; }',
+            '.ots-payment-saving svg { width: 12px; height: 12px; stroke: currentColor; }',
+            '@media (max-width: 760px) {',
+            '  .ots-payment-options-grid { grid-template-columns: 1fr; gap: 10px; }',
+            '  .ots-payment-card { grid-template-columns: 38px minmax(0, 1fr); gap: 12px; min-height: 0; padding: 12px 14px; }',
+            '  .ots-payment-icon { width: 38px; height: 38px; }',
+            '  .ots-payment-icon svg { width: 20px; height: 20px; }',
+            '  .ots-payment-price { font-size: 16px; }',
             '}'
         ].join('\n');
 
@@ -3220,6 +3178,28 @@ body #divKargoBedava { display:none!important; }
         ].join('');
     }
 
+    function doorCashIcon() {
+        return [
+            '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
+            '  <path d="M6 18h30v24H6zM36 26h12l8 9v7H36" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+            '  <circle cx="16" cy="46" r="5" stroke="currentColor" stroke-width="4" fill="#fff"/>',
+            '  <circle cx="46" cy="46" r="5" stroke="currentColor" stroke-width="4" fill="#fff"/>',
+            '  <rect x="11" y="24" width="20" height="12" rx="2" fill="currentColor"/>',
+            '  <circle cx="21" cy="30" r="3" fill="#fff"/>',
+            '</svg>'
+        ].join('');
+    }
+
+    function doorCardIcon() {
+        return [
+            '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
+            '  <rect x="18" y="8" width="28" height="48" rx="5" stroke="currentColor" stroke-width="4"/>',
+            '  <rect x="24" y="15" width="16" height="9" rx="1.5" fill="currentColor"/>',
+            '  <path d="M25 33h3M31 33h3M37 33h2M25 40h3M31 40h3M37 40h2M25 47h14" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>',
+            '</svg>'
+        ].join('');
+    }
+
     function tagIcon() {
         return [
             '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">',
@@ -3230,21 +3210,20 @@ body #divKargoBedava { display:none!important; }
     }
 
     function buildCard(options) {
-        var saving = options.saving > 0 ? [
-            '<span class="ots-payment-saving">',
-            tagIcon(),
-            formatPrice(options.saving) + ' tasarruf edin',
-            '</span>'
-        ].join('') : '';
+        var saving = options.saving > 0
+            ? '<span class="ots-payment-saving">' + tagIcon() + formatPrice(options.saving) + ' tasarruf</span>'
+            : '';
 
         return [
             '<article class="ots-payment-card ' + options.className + '">',
             '  <span class="ots-payment-icon">' + options.icon + '</span>',
             '  <span class="ots-payment-copy">',
-            '    <strong class="ots-payment-title">' + options.title + '</strong>',
-            '    <b class="ots-payment-price">' + options.price + '</b>',
-            saving,
+            '    <span class="ots-payment-top">',
+            '      <strong class="ots-payment-title">' + options.title + '</strong>',
+            '      <span class="ots-payment-price">' + options.price + '</span>',
+            '    </span>',
             '    <span class="ots-payment-desc">' + options.description + '</span>',
+            saving,
             '  </span>',
             '</article>'
         ].join('');
@@ -3262,8 +3241,16 @@ body #divKargoBedava { display:none!important; }
             cardText: cardPrice ? formatPrice(cardPrice) : cardText,
             transferPrice: transferPrice,
             cardPrice: cardPrice,
-            saving: saving
+            saving: saving,
+            doorCash: readDoorPrice('#ltrKapidaOdemeFiyati'),
+            doorCard: readDoorPrice('#ltrKapidaOdemeKKFiyati')
         };
+    }
+
+    // Kapıda ödeme fiyatı (Ticimax alanından). Alan yoksa veya boşsa kart gösterilmez.
+    function readDoorPrice(selector) {
+        var price = parsePrice(text(selector));
+        return price ? { text: formatPrice(price) } : null;
     }
 
     function buildShell(data) {
@@ -3272,19 +3259,35 @@ body #divKargoBedava { display:none!important; }
             buildCard({
                 className: 'is-transfer',
                 icon: bankIcon(),
-                title: 'Havale ile Ödeme',
+                title: 'Havale (%5 İndirim)',
                 price: data.transferText || '-',
                 saving: data.saving,
-                description: 'Siparişinizi havale ile ödeyerek avantajlı fiyatla satın alın.'
+                description: 'Havale/EFT ile ödemede %5 indirim uygulanır.'
             }),
             buildCard({
                 className: 'is-card',
                 icon: cardIcon(),
-                title: 'Kredi Kartı Tek Çekim',
+                title: 'Kredi Kartı - Tek Çekim',
                 price: data.cardText || '-',
                 saving: 0,
-                description: 'Ekstra ödeme veya taksit farkı yoktur.'
+                description: 'Kartınızla tek seferde, ek ücret olmadan.'
             }),
+            data.doorCash ? buildCard({
+                className: 'is-door-cash',
+                icon: doorCashIcon(),
+                title: 'Kapıda Ödeme Nakit',
+                price: data.doorCash.text,
+                saving: 0,
+                description: 'Siparişinizi teslim alırken nakit ödeyin.'
+            }) : '',
+            data.doorCard ? buildCard({
+                className: 'is-door-card',
+                icon: doorCardIcon(),
+                title: 'Kapıda Ödeme Kredi Kartı',
+                price: data.doorCard.text,
+                saving: 0,
+                description: 'Teslimatta kurye POS cihazıyla kartla ödeyin.'
+            }) : '',
             '</div>'
         ].join('');
     }
@@ -3327,7 +3330,9 @@ body #divKargoBedava { display:none!important; }
         var signature = [
             data.transferText,
             data.cardText,
-            Math.floor(data.saving * 100)
+            Math.floor(data.saving * 100),
+            data.doorCash ? data.doorCash.text : '',
+            data.doorCard ? data.doorCard.text : ''
         ].join('|');
 
         var target = getContentTarget(source);
@@ -3673,7 +3678,10 @@ body #divKargoBedava { display:none!important; }
 (function () {
     var STYLE_ID = "ots-sticky-cart-style";
     var BAR_ID = "otsStickyCart";
+    // Asıl Sepete Ekle butonu bulunamazsa kullanılan yedek eşik (px).
     var SHOW_AFTER_SCROLL = 80;
+    // Asıl buton yapışkan üst menünün altına bu kadar girince geçilmiş sayılır (px).
+    var BUTTON_PASSED_MARGIN = 8;
     var state = {
         bar: null,
         qtyInput: null,
@@ -4132,11 +4140,30 @@ body #divKargoBedava { display:none!important; }
         qs(".ots-sc-add", bar).addEventListener("click", handleAdd);
     }
 
+    // Bar, sayfadaki asıl Sepete Ekle butonu kaydırılarak ekranın üstünden çıkınca görünür;
+    // kullanıcı butonu görürken çift buton oluşmaz. Buton yoksa sabit eşiğe düşer.
+    function getStickyHeaderBottom() {
+        var header = qs("#header") || qs("header");
+        if (!header) return 0;
+        var position = window.getComputedStyle(header).position;
+        if (position !== "fixed" && position !== "sticky") return 0;
+        var rect = header.getBoundingClientRect();
+        return rect.top <= 0 && rect.bottom > 0 ? rect.bottom : 0;
+    }
+
+    function hasPassedRealButton() {
+        var button = getRealAddButton();
+        if (button && isVisible(button)) {
+            return button.getBoundingClientRect().bottom < getStickyHeaderBottom() + BUTTON_PASSED_MARGIN;
+        }
+        return getScrollTop() > SHOW_AFTER_SCROLL;
+    }
+
     function updateVisibility() {
         visibilityScheduled = false;
         var stockEmpty = qs("#divStokYok");
         var hasProductDetail = !!(qs(".ProductName") || qs("#pnlFiyatlar") || qs("#divSatinAl"));
-        var hasScrolled = getScrollTop() > SHOW_AFTER_SCROLL;
+        var hasScrolled = hasPassedRealButton();
         var shouldShow = hasProductDetail && hasScrolled && !(stockEmpty && isVisible(stockEmpty));
 
         if (!state.bar) return;
