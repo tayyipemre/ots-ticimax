@@ -3029,9 +3029,11 @@ body #divKargoBedava { display:none!important; }
             '.ots-payment-options-grid {',
             '  display: grid;',
             '  grid-template-columns: repeat(2, minmax(0, 1fr));',
+            '  grid-auto-rows: 1fr;',
             '  gap: 12px;',
             '}',
             '.ots-payment-card {',
+            '  height: 100%;',
             '  --tone: #0c154c;',
             '  --tone-bg: #f4f6fb;',
             '  --tone-line: #e2e6f1;',
@@ -3066,7 +3068,8 @@ body #divKargoBedava { display:none!important; }
             '.ots-payment-copy { min-width: 0; }',
             '.ots-payment-top {',
             '  display: flex;',
-            '  align-items: baseline;',
+            '  flex-wrap: wrap;',
+            '  align-items: center;',
             '  justify-content: space-between;',
             '  gap: 10px;',
             '  margin: 0 0 3px;',
@@ -3078,15 +3081,6 @@ body #divKargoBedava { display:none!important; }
             '  font-weight: 600;',
             '  line-height: 1.3;',
             '}',
-            '.ots-payment-price {',
-            '  flex: 0 0 auto;',
-            '  color: var(--tone);',
-            '  font-size: 17px;',
-            '  font-weight: 700;',
-            '  line-height: 1.2;',
-            '  letter-spacing: -.01em;',
-            '  white-space: nowrap;',
-            '}',
             '.ots-payment-desc {',
             '  display: block;',
             '  color: var(--ots-pay-muted);',
@@ -3095,11 +3089,13 @@ body #divKargoBedava { display:none!important; }
             '  line-height: 1.45;',
             '}',
             '.ots-payment-saving {',
+            '  flex: 0 0 auto;',
             '  display: inline-flex;',
             '  align-items: center;',
             '  gap: 5px;',
-            '  margin: 6px 0 0;',
-            '  padding: 3px 8px;',
+            '  margin: 0;',
+            '  padding: 4px 10px;',
+            '  white-space: nowrap;',
             '  color: var(--tone);',
             '  font-size: 11px;',
             '  font-weight: 600;',
@@ -3114,7 +3110,6 @@ body #divKargoBedava { display:none!important; }
             '  .ots-payment-card { grid-template-columns: 38px minmax(0, 1fr); gap: 12px; min-height: 0; padding: 12px 14px; }',
             '  .ots-payment-icon { width: 38px; height: 38px; }',
             '  .ots-payment-icon svg { width: 20px; height: 20px; }',
-            '  .ots-payment-price { font-size: 16px; }',
             '}'
         ].join('\n');
 
@@ -3209,10 +3204,9 @@ body #divKargoBedava { display:none!important; }
         ].join('');
     }
 
+    // Kartlarda tutar gösterilmez; yalnızca havale kartında indirim rozeti yer alır.
     function buildCard(options) {
-        var saving = options.saving > 0
-            ? '<span class="ots-payment-saving">' + tagIcon() + formatPrice(options.saving) + ' tasarruf</span>'
-            : '';
+        var badge = options.badge ? '<span class="ots-payment-saving">' + tagIcon() + options.badge + '</span>' : '';
 
         return [
             '<article class="ots-payment-card ' + options.className + '">',
@@ -3220,10 +3214,9 @@ body #divKargoBedava { display:none!important; }
             '  <span class="ots-payment-copy">',
             '    <span class="ots-payment-top">',
             '      <strong class="ots-payment-title">' + options.title + '</strong>',
-            '      <span class="ots-payment-price">' + options.price + '</span>',
+            badge,
             '    </span>',
             '    <span class="ots-payment-desc">' + options.description + '</span>',
-            saving,
             '  </span>',
             '</article>'
         ].join('');
@@ -3235,6 +3228,10 @@ body #divKargoBedava { display:none!important; }
         var transferPrice = parsePrice(transferText);
         var cardPrice = parsePrice(cardText);
         var saving = cardPrice > transferPrice ? cardPrice - transferPrice : 0;
+        // Üstteki havale kutusu (Bölüm 6) %5'i sepette geçerli kampanyalı fiyattan hesaplar;
+        // tutarlar aynı görünsün diye varsa o kutudaki tasarruf kullanılır.
+        var widgetSaving = parsePrice(text('.ots-bank-transfer-amount'));
+        if (widgetSaving > 0) saving = widgetSaving;
 
         return {
             transferText: transferPrice ? formatPrice(transferPrice) : transferText,
@@ -3259,33 +3256,26 @@ body #divKargoBedava { display:none!important; }
             buildCard({
                 className: 'is-transfer',
                 icon: bankIcon(),
-                title: 'Havale (%5 İndirim)',
-                price: data.transferText || '-',
-                saving: data.saving,
+                title: 'Havale / EFT',
+                badge: '%5 indirim' + (data.saving > 0 ? ' · ' + formatPrice(data.saving) + ' tasarruf' : ''),
                 description: 'Havale/EFT ile ödemede %5 indirim uygulanır.'
             }),
             buildCard({
                 className: 'is-card',
                 icon: cardIcon(),
                 title: 'Kredi Kartı - Tek Çekim',
-                price: data.cardText || '-',
-                saving: 0,
                 description: 'Kartınızla tek seferde, ek ücret olmadan.'
             }),
             data.doorCash ? buildCard({
                 className: 'is-door-cash',
                 icon: doorCashIcon(),
                 title: 'Kapıda Ödeme Nakit',
-                price: data.doorCash.text,
-                saving: 0,
                 description: 'Siparişinizi teslim alırken nakit ödeyin.'
             }) : '',
             data.doorCard ? buildCard({
                 className: 'is-door-card',
                 icon: doorCardIcon(),
                 title: 'Kapıda Ödeme Kredi Kartı',
-                price: data.doorCard.text,
-                saving: 0,
                 description: 'Teslimatta kurye POS cihazıyla kartla ödeyin.'
             }) : '',
             '</div>'
