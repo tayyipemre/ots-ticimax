@@ -4,6 +4,7 @@
     var SELECTOR = '.ots-instagram-videos';
     var STYLE_ID = 'otsInstagramVideosStyle';
     var HIGHLIGHT_URL = 'https://www.instagram.com/stories/highlights/17994209442115512/';
+    var MANIFEST_URL = 'https://cdn.jsdelivr.net/gh/tayyipemre/ots-ticimax@d5292b6/ots-instagram-videolari.json';
     var cleanupArrows = null;
 
     function el(tag, className, text) {
@@ -226,7 +227,7 @@
             }
         };
         var inline = window.OTS_INSTAGRAM_VIDEOS;
-        var url = safeUrl(root.getAttribute('data-videos-url'));
+        var url = safeUrl(root.getAttribute('data-videos-url') || MANIFEST_URL);
         var source = Array.isArray(inline) ? Promise.resolve(inline) :
             (url ? fetch(url, { cache: 'no-cache' }).then(function (response) {
                 if (!response.ok) throw new Error('Video listesi yüklenemedi');
