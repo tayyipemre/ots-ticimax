@@ -106,7 +106,7 @@
             '.ots-home-reviews .ots-review-stars .ots-review-empty-star{color:#d8dce1}',
             '.ots-home-reviews .ots-review-text{margin:19px 0 0;white-space:pre-line;overflow-wrap:anywhere;font-size:17px;line-height:1.65}',
             '.ots-home-reviews .ots-review-images{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}',
-            '.ots-home-reviews .ots-review-images a{display:block;width:66px;height:66px;overflow:hidden;border:1px solid #e5e8e9;border-radius:8px}',
+            '.ots-home-reviews .ots-review-images button{display:block;width:66px;height:66px;overflow:hidden;padding:0;border:1px solid #e5e8e9;border-radius:8px;background:#fff;cursor:zoom-in}',
             '.ots-home-reviews .ots-review-images img{width:100%;height:100%;object-fit:cover}',
             '.ots-home-reviews .ots-review-more{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:56px;margin-top:22px;border:2px solid #075dcb;border-radius:13px;background:#fff;color:#28333d;font:inherit;font-size:17px;cursor:pointer;transition:background .2s,color .2s}',
             '.ots-home-reviews .ots-review-more:hover{background:#f0f6ff}',
@@ -114,13 +114,57 @@
             '.ots-home-reviews .ots-review-message{padding:36px 16px;text-align:center;color:#687583;font-size:16px}',
             '.ots-home-reviews .ots-review-sort:focus{outline:none!important;box-shadow:none!important}',
             '.ots-home-reviews .ots-review-sort:focus-visible{background:#f4faf5}',
-            '.ots-home-reviews button:focus-visible,.ots-home-reviews a:focus-visible{outline:3px solid #075dcb;outline-offset:3px}',
+            '.ots-home-reviews button:focus-visible{outline:3px solid #075dcb;outline-offset:3px}',
+            '.ots-home-review-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px;background:rgba(7,14,38,.89)}',
+            '.ots-home-review-modal__panel{position:relative;display:flex;align-items:center;justify-content:center;max-width:100%;max-height:100%;margin:auto}',
+            '.ots-home-review-modal__image{display:block;max-width:100%;max-height:calc(100vh - 48px);object-fit:contain;border-radius:5px}',
+            '.ots-home-review-modal__close{position:fixed;top:16px;right:16px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:#fff;color:#0c154c;font-size:29px;line-height:1;cursor:pointer}',
+            '.ots-home-review-modal__close:focus-visible{outline:3px solid #fff;outline-offset:3px}',
             '@media(max-width:1050px){.ots-home-reviews .ots-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}',
             '@media(max-width:850px){.ots-home-reviews .ots-review-intro{align-items:flex-start;flex-direction:column;gap:24px}.ots-home-reviews .ots-review-proof{min-height:0;width:100%;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px}.ots-home-reviews .ots-review-proof-label{max-width:none;margin:0}}',
             '@media(max-width:680px){.customer-comments.ots-home-reviews{padding:20px 14px 38px}.ots-home-reviews .ots-review-intro{gap:22px;margin-bottom:24px;padding:28px 23px;border-radius:17px}.ots-home-reviews .ots-review-intro-desc{font-size:14px}.ots-home-reviews .ots-review-count{font-size:38px}.ots-home-reviews .ots-review-grid{grid-template-columns:1fr;gap:14px}.ots-home-reviews .ots-review-card{min-height:0;padding:20px}.ots-home-reviews .ots-review-sort{min-width:0;width:52%;font-size:14px}.ots-home-reviews .ots-review-photo{font-size:14px}.ots-home-reviews .ots-review-text{font-size:16px}.ots-home-reviews .ots-review-rating{font-size:15px}.ots-home-reviews .ots-review-stars{font-size:17px}}',
             '@media(prefers-reduced-motion:reduce){.ots-home-reviews .ots-review-photo,.ots-home-reviews .ots-review-more{transition:none}}'
         ].join('\n');
         document.head.appendChild(style);
+    }
+
+    function showImage(image, opener) {
+        var overlay = el('div', 'ots-home-review-modal');
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Müşteri yorumu fotoğrafı');
+        var panel = el('div', 'ots-home-review-modal__panel');
+        var close = el('button', 'ots-home-review-modal__close', '×');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Fotoğrafı kapat');
+        var large = el('img', 'ots-home-review-modal__image');
+        large.src = image.original;
+        large.alt = 'Müşteri yorumu fotoğrafı';
+        panel.appendChild(large);
+        overlay.appendChild(panel);
+        overlay.appendChild(close);
+        var previousOverflow = document.body.style.overflow;
+        function dismiss() {
+            document.removeEventListener('keydown', onKeydown);
+            document.body.style.overflow = previousOverflow;
+            overlay.remove();
+            opener.focus();
+        }
+        function onKeydown(event) {
+            if (event.key === 'Escape') dismiss();
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                close.focus();
+            }
+        }
+        close.addEventListener('click', dismiss);
+        overlay.addEventListener('click', function (event) {
+            if (event.target === overlay) dismiss();
+        });
+        document.addEventListener('keydown', onKeydown);
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        close.focus();
     }
 
     function filteredReviews() {
@@ -164,17 +208,16 @@
         if (review.images.length) {
             var gallery = el('div', 'ots-review-images');
             review.images.forEach(function (image, index) {
-                var link = el('a');
-                link.href = image.original;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.setAttribute('aria-label', 'Yorum fotoğrafını aç ' + (index + 1));
+                var button = el('button');
+                button.type = 'button';
+                button.setAttribute('aria-label', 'Yorum fotoğrafını büyüt ' + (index + 1));
                 var img = el('img');
                 img.src = image.thumb;
                 img.alt = 'Müşteri yorumu fotoğrafı ' + (index + 1);
                 img.loading = 'lazy';
-                link.appendChild(img);
-                gallery.appendChild(link);
+                button.appendChild(img);
+                button.addEventListener('click', function () { showImage(image, button); });
+                gallery.appendChild(button);
             });
             article.appendChild(gallery);
         }

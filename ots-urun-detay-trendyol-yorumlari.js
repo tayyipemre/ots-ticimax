@@ -19,18 +19,6 @@
         return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
     }
 
-    function productKey(path) {
-        var name;
-        try {
-            name = new URL(path, 'https://www.trendyol.com').pathname.toLowerCase();
-            name = decodeURIComponent(name);
-        } catch (error) {
-            return '';
-        }
-        return name.replace(/^\/ots\//, '/').replace(/^\/ots-/, '/')
-            .replace(/-p-\d+\/?$/, '').replace(/^\/|\/$/g, '');
-    }
-
     function formatDate(value) {
         var date = /^(\d{4})-(\d{2})-(\d{2})/.exec(clean(value));
         return date ? date[3] + '.' + date[2] + '.' + date[1] : clean(value);
@@ -43,14 +31,14 @@
 
     function normalize(raw) {
         var rate = Number(raw.rate != null ? raw.rate : raw.rating);
-        var files = Array.isArray(raw.mediaFiles) ? raw.mediaFiles : [];
+        var files = Array.isArray(raw.mediaFiles) ? raw.mediaFiles.slice() : [];
+        if (raw.mediaFile) files.push(raw.mediaFile);
         return {
             id: clean(raw.id || raw.reviewId),
             text: clean(raw.comment || raw.review || raw.text),
             author: clean(raw.userFullName || raw.userName || raw.user) || 'Trendyol müşterisi',
             date: clean(raw.date || raw.commentDateISOType),
             rate: isFinite(rate) ? Math.max(0, Math.min(5, rate)) : 0,
-            key: productKey((raw.product || {}).link || (raw.product || {}).url || ''),
             images: files.map(function (file) {
                 if (!file || (file.mediaType && file.mediaType !== 'IMAGE')) return null;
                 var original = safeImage(file.url || file.mobileUrl || file.thumbnailUrl);
@@ -71,7 +59,7 @@
             '#'+ROOT_ID+' .ots-pdp-reviews-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:0 0 18px;padding:0 0 15px;border-bottom:1px solid #e2e6eb}',
             '#'+ROOT_ID+' .ots-pdp-reviews-eyebrow{display:block;margin:0 0 5px;color:#0c154c;font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}',
             '#'+ROOT_ID+' h2{margin:0;color:#0c154c;font-size:clamp(19px,2vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.3}',
-            '#'+ROOT_ID+' .ots-pdp-reviews-meta{display:block;margin:0;color:#778390;font-size:12px;line-height:1.4;text-align:right;white-space:nowrap}',
+            '#'+ROOT_ID+' .ots-pdp-reviews-meta{display:block;margin:0;color:#778390;font-size:12px;line-height:1.4;text-align:right}',
             '#'+ROOT_ID+' .ots-pdp-reviews-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px}',
             '#'+ROOT_ID+' .ots-pdp-review{min-width:0;padding:20px 22px;border:1px solid #e2e6eb;border-radius:12px;background:#fff}',
             '#'+ROOT_ID+' .ots-pdp-review-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}',
@@ -81,14 +69,58 @@
             '#'+ROOT_ID+' .ots-pdp-review-text{margin:0;color:#2c3540;font-size:15px;line-height:1.65;overflow-wrap:anywhere}',
             '#'+ROOT_ID+' .ots-pdp-review-author{display:block;margin-top:14px;color:#667381;font-size:12px;font-weight:600}',
             '#'+ROOT_ID+' .ots-pdp-review-images{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}',
-            '#'+ROOT_ID+' .ots-pdp-review-images a{display:block;width:56px;height:56px;overflow:hidden;border:1px solid #e2e6eb;border-radius:7px}',
+            '#'+ROOT_ID+' .ots-pdp-review-images button{display:block;width:56px;height:56px;overflow:hidden;padding:0;border:1px solid #e2e6eb;border-radius:7px;background:#fff;cursor:zoom-in}',
             '#'+ROOT_ID+' .ots-pdp-review-images img{display:block;width:100%;height:100%;object-fit:cover}',
             '#'+ROOT_ID+' .ots-pdp-reviews-more{display:block;margin:17px auto 0;padding:8px 4px;border:0;border-bottom:1px solid #0c154c;background:transparent;color:#0c154c;font:inherit;font-size:13px;font-weight:600;cursor:pointer}',
             '#'+ROOT_ID+' .ots-pdp-reviews-more:hover{color:#224492;border-color:#224492}',
-            '#'+ROOT_ID+' .ots-pdp-reviews-more:focus-visible,#'+ROOT_ID+' a:focus-visible{outline:2px solid #0c154c;outline-offset:3px}',
+            '#'+ROOT_ID+' .ots-pdp-reviews-more:focus-visible,#'+ROOT_ID+' .ots-pdp-review-images button:focus-visible{outline:2px solid #0c154c;outline-offset:3px}',
+            '.ots-pdp-review-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px;background:rgba(7,14,38,.89)}',
+            '.ots-pdp-review-modal__panel{position:relative;display:flex;align-items:center;justify-content:center;max-width:100%;max-height:100%;margin:auto}',
+            '.ots-pdp-review-modal__image{display:block;max-width:100%;max-height:calc(100vh - 48px);object-fit:contain;border-radius:5px}',
+            '.ots-pdp-review-modal__close{position:fixed;top:16px;right:16px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:#fff;color:#0c154c;font-size:29px;line-height:1;cursor:pointer}',
+            '.ots-pdp-review-modal__close:focus-visible{outline:3px solid #fff;outline-offset:3px}',
             '@media(max-width:640px){#'+ROOT_ID+'{padding:0 14px;margin:22px auto 30px}#'+ROOT_ID+' .ots-pdp-reviews-head{align-items:flex-start;flex-direction:column;gap:5px}#'+ROOT_ID+' .ots-pdp-reviews-meta{text-align:left}#'+ROOT_ID+' .ots-pdp-review{padding:17px 18px}}'
         ].join('\n');
         document.head.appendChild(style);
+    }
+
+    function showImage(image, opener) {
+        var overlay = element('div', 'ots-pdp-review-modal');
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', 'Müşteri yorumu fotoğrafı');
+        var panel = element('div', 'ots-pdp-review-modal__panel');
+        var close = element('button', 'ots-pdp-review-modal__close', '×');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Fotoğrafı kapat');
+        var large = element('img', 'ots-pdp-review-modal__image');
+        large.src = image.original;
+        large.alt = 'Müşteri yorumu fotoğrafı';
+        panel.appendChild(large);
+        overlay.appendChild(panel);
+        overlay.appendChild(close);
+        var previousOverflow = document.body.style.overflow;
+        function dismiss() {
+            document.removeEventListener('keydown', onKeydown);
+            document.body.style.overflow = previousOverflow;
+            overlay.remove();
+            opener.focus();
+        }
+        function onKeydown(event) {
+            if (event.key === 'Escape') dismiss();
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                close.focus();
+            }
+        }
+        close.addEventListener('click', dismiss);
+        overlay.addEventListener('click', function (event) {
+            if (event.target === overlay) dismiss();
+        });
+        document.addEventListener('keydown', onKeydown);
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        close.focus();
     }
 
     function reviewCard(review) {
@@ -111,17 +143,16 @@
         if (review.images.length) {
             var images = element('div', 'ots-pdp-review-images');
             review.images.forEach(function (image, index) {
-                var link = element('a');
-                link.href = image.original;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.setAttribute('aria-label', 'Yorum fotoğrafını aç ' + (index + 1));
+                var button = element('button');
+                button.type = 'button';
+                button.setAttribute('aria-label', 'Yorum fotoğrafını büyüt ' + (index + 1));
                 var img = element('img');
                 img.src = image.thumb;
                 img.alt = 'Müşteri yorumu fotoğrafı ' + (index + 1);
                 img.loading = 'lazy';
-                link.appendChild(img);
-                images.appendChild(link);
+                button.appendChild(img);
+                button.addEventListener('click', function () { showImage(image, button); });
+                images.appendChild(button);
             });
             card.appendChild(images);
         }
@@ -136,12 +167,12 @@
         var head = element('div', 'ots-pdp-reviews-head');
         var titleGroup = element('div');
         titleGroup.appendChild(element('span', 'ots-pdp-reviews-eyebrow', 'Müşteri yorumları'));
-        var title = element('h2', '', 'Bu ürünü alanlar ne diyor?');
+        var title = element('h2', '', 'Müşterilerimiz ne diyor?');
         title.id = ROOT_ID + 'Title';
         titleGroup.appendChild(title);
         head.appendChild(titleGroup);
         head.appendChild(element('span', 'ots-pdp-reviews-meta',
-            'Trendyol · ' + reviews.length + ' değerlendirme'));
+            'ÖTS Trendyol yorumları · ' + reviews.length + ' değerlendirme'));
         root.appendChild(head);
         var list = element('div', 'ots-pdp-reviews-list');
         root.appendChild(list);
@@ -166,18 +197,18 @@
     function mount() {
         var target = document.querySelector('#divUrunOzellikAlani');
         if (!target || document.getElementById(ROOT_ID)) return false;
-        var currentKey = productKey(target.getAttribute('data-trendyol-product-path') || window.location.pathname);
-        if (!currentKey) return false;
         var url = SCRIPT_URL || DATA_URL;
         fetch(url, { cache: 'no-cache' }).then(function (response) {
             if (!response.ok) throw new Error('Yorum verisi yüklenemedi');
             return response.json();
         }).then(function (data) {
-            var raw = data && data.product && data.product.reviews;
-            if (!Array.isArray(raw)) return;
+            var store = data && data.store && data.store.reviews;
+            var product = data && data.product && data.product.reviews;
+            if (!Array.isArray(store) || !Array.isArray(product)) return;
+            var raw = store.concat(product);
             var seen = Object.create(null);
             var reviews = raw.map(normalize).filter(function (review) {
-                if (review.key !== currentKey || !review.text || review.rate < MIN_RATE) return false;
+                if (!review.text || review.rate < MIN_RATE) return false;
                 if (review.id && seen[review.id]) return false;
                 if (review.id) seen[review.id] = true;
                 return true;
