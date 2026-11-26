@@ -5,6 +5,7 @@
     var STYLE_ID = 'ots-home-reviews-style';
     var DEFAULT_URL = 'https://ornekler.com.tr/js/ots/sayfalar/yorumlar.json';
     var PAGE_SIZE = 9;
+    var MIN_RATE = 3;
     var state = {
         root: null,
         reviews: [],
@@ -77,6 +78,16 @@
             '.customer-comments.ots-home-reviews{box-sizing:border-box;width:100%;max-width:1480px;margin:0 auto;padding:28px 20px 48px;color:#28333d;font-family:inherit}',
             '.customer-comments.ots-home-reviews *{box-sizing:border-box}',
             '.ots-home-reviews [hidden]{display:none!important}',
+            '.ots-home-reviews .ots-review-intro{position:relative;display:flex;align-items:center;justify-content:space-between;gap:32px;overflow:hidden;margin-bottom:30px;padding:36px 42px;border-radius:22px;background:radial-gradient(circle at 78% 10%,#263a78 0%,#0c154c 49%,#091136 100%);color:#fff}',
+            '.ots-home-reviews .ots-review-intro:after{content:"";position:absolute;right:-80px;bottom:-180px;width:360px;height:360px;border:1px solid rgba(255,255,255,.12);border-radius:50%;pointer-events:none}',
+            '.ots-home-reviews .ots-review-intro-copy,.ots-home-reviews .ots-review-proof{position:relative;z-index:1}',
+            '.ots-home-reviews .ots-review-eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 15px;color:#cdd6f5;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase}',
+            '.ots-home-reviews .ots-review-eyebrow:before{content:"";display:block;width:27px;height:3px;border-radius:3px;background:#ff4658}',
+            '.ots-home-reviews .ots-review-intro h2{max-width:710px;margin:0;color:#fff;font-size:clamp(28px,3.4vw,44px);font-weight:700;letter-spacing:-.035em;line-height:1.13}',
+            '.ots-home-reviews .ots-review-intro-desc{max-width:630px;margin:15px 0 0;color:#d9e0f2;font-size:16px;line-height:1.55}',
+            '.ots-home-reviews .ots-review-proof{display:flex;flex:none;flex-direction:column;justify-content:center;min-width:214px;min-height:152px;padding:20px 24px;border:1px solid rgba(255,255,255,.2);border-radius:16px;background:rgba(255,255,255,.07)}',
+            '.ots-home-reviews .ots-review-count{color:#fff;font-size:48px;font-weight:700;letter-spacing:-.045em;line-height:1}',
+            '.ots-home-reviews .ots-review-proof-label{max-width:170px;margin-top:9px;color:#d9e0f2;font-size:13px;line-height:1.35}',
             '.ots-home-reviews .ots-review-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px}',
             '.ots-home-reviews .ots-review-sort{min-width:158px;height:50px;padding:0 42px 0 17px;border:2px solid #288a35;border-radius:10px;background:#fff;color:#18222c;font:inherit;font-size:16px;cursor:pointer}',
             '.ots-home-reviews .ots-review-photo{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 14px;border:1px solid #e2e5e8;border-radius:9px;background:#fff;color:#28333d;font:inherit;font-size:15px;cursor:pointer;transition:background .2s,border-color .2s}',
@@ -103,7 +114,8 @@
             '.ots-home-reviews .ots-review-message{padding:36px 16px;text-align:center;color:#687583;font-size:16px}',
             '.ots-home-reviews .ots-review-sort:focus-visible,.ots-home-reviews button:focus-visible,.ots-home-reviews a:focus-visible{outline:3px solid #075dcb;outline-offset:3px}',
             '@media(max-width:1050px){.ots-home-reviews .ots-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}',
-            '@media(max-width:680px){.customer-comments.ots-home-reviews{padding:20px 14px 38px}.ots-home-reviews .ots-review-grid{grid-template-columns:1fr;gap:14px}.ots-home-reviews .ots-review-card{min-height:0;padding:20px}.ots-home-reviews .ots-review-sort{min-width:0;width:52%;font-size:14px}.ots-home-reviews .ots-review-photo{font-size:14px}.ots-home-reviews .ots-review-text{font-size:16px}.ots-home-reviews .ots-review-rating{font-size:15px}.ots-home-reviews .ots-review-stars{font-size:17px}}',
+            '@media(max-width:850px){.ots-home-reviews .ots-review-intro{align-items:flex-start;flex-direction:column;gap:24px}.ots-home-reviews .ots-review-proof{min-height:0;width:100%;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px}.ots-home-reviews .ots-review-proof-label{max-width:none;margin:0}}',
+            '@media(max-width:680px){.customer-comments.ots-home-reviews{padding:20px 14px 38px}.ots-home-reviews .ots-review-intro{gap:22px;margin-bottom:24px;padding:28px 23px;border-radius:17px}.ots-home-reviews .ots-review-intro-desc{font-size:14px}.ots-home-reviews .ots-review-count{font-size:38px}.ots-home-reviews .ots-review-grid{grid-template-columns:1fr;gap:14px}.ots-home-reviews .ots-review-card{min-height:0;padding:20px}.ots-home-reviews .ots-review-sort{min-width:0;width:52%;font-size:14px}.ots-home-reviews .ots-review-photo{font-size:14px}.ots-home-reviews .ots-review-text{font-size:16px}.ots-home-reviews .ots-review-rating{font-size:15px}.ots-home-reviews .ots-review-stars{font-size:17px}}',
             '@media(prefers-reduced-motion:reduce){.ots-home-reviews .ots-review-photo,.ots-home-reviews .ots-review-more{transition:none}}'
         ].join('\n');
         document.head.appendChild(style);
@@ -198,6 +210,21 @@
     }
 
     function renderShell(root) {
+        var intro = el('section', 'ots-review-intro');
+        intro.setAttribute('aria-labelledby', 'ots-review-intro-title');
+        var introCopy = el('div', 'ots-review-intro-copy');
+        introCopy.appendChild(el('p', 'ots-review-eyebrow', 'ÖTS müşteri deneyimleri'));
+        var title = el('h2', '', 'Konforu yaşayanlar anlatıyor.');
+        title.id = 'ots-review-intro-title';
+        introCopy.appendChild(title);
+        introCopy.appendChild(el('p', 'ots-review-intro-desc',
+            'ÖTS’i tercih eden müşterilerimizin Trendyol’da paylaştığı deneyimleri keşfedin.'));
+        var proof = el('div', 'ots-review-proof');
+        proof.appendChild(el('strong', 'ots-review-count', '—'));
+        proof.appendChild(el('span', 'ots-review-proof-label', '3 yıldız ve üzeri Trendyol yorumu'));
+        intro.appendChild(introCopy);
+        intro.appendChild(proof);
+        root.appendChild(intro);
         var toolbar = el('div', 'ots-review-toolbar');
         var sort = el('select', 'ots-review-sort');
         sort.setAttribute('aria-label', 'Yorum sıralaması');
@@ -258,11 +285,12 @@
             if (!Array.isArray(raw)) throw new Error('Yorum verisi geçersiz');
             var seen = Object.create(null);
             state.reviews = raw.map(normalize).filter(function (review) {
-                if (!review.text) return false;
+                if (!review.text || review.rate < MIN_RATE) return false;
                 if (review.id && seen[review.id]) return false;
                 if (review.id) seen[review.id] = true;
                 return true;
             });
+            root.querySelector('.ots-review-count').textContent = state.reviews.length.toLocaleString('tr-TR');
             resetList();
         }).catch(function () {
             var message = root.querySelector('.ots-review-message');
