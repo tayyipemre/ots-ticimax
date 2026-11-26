@@ -268,7 +268,7 @@
             'ÖTS’i tercih eden müşterilerimizin Trendyol’da paylaştığı deneyimleri keşfedin.'));
         var proof = el('div', 'ots-review-proof');
         proof.appendChild(el('strong', 'ots-review-count', '—'));
-        proof.appendChild(el('span', 'ots-review-proof-label', '3 yıldız ve üzeri Trendyol yorumu'));
+        proof.appendChild(el('span', 'ots-review-proof-label', 'Memnun müşterilerimizin deneyimleri ve yorumları'));
         intro.appendChild(introCopy);
         intro.appendChild(proof);
         root.appendChild(intro);
