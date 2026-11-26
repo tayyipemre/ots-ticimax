@@ -52,7 +52,7 @@
             '.ots-instagram-videos__link{flex:none;color:#0c154c;font-size:13px;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px}',
             '.ots-instagram-videos__link:hover{color:#e13c50}',
             '.ots-instagram-videos__viewport{position:relative}',
-            '.ots-instagram-videos__track{--ots-video-gap:16px;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 2 * var(--ots-video-gap))/3);gap:var(--ots-video-gap);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}',
+            '.ots-instagram-videos__track{--ots-video-gap:16px;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 4 * var(--ots-video-gap))/5);gap:var(--ots-video-gap);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}',
             '.ots-instagram-videos__track::-webkit-scrollbar{display:none}',
             '.ots-instagram-videos__card{position:relative;display:block;width:100%;aspect-ratio:9/16;overflow:hidden;border:0;border-radius:17px;background:linear-gradient(145deg,#1e2a57,#090f2d);color:#fff;cursor:pointer;scroll-snap-align:start;text-align:left}',
             '.ots-instagram-videos__poster{display:block;width:100%;height:100%;object-fit:cover}',
@@ -72,6 +72,7 @@
             '.ots-instagram-video-modal__video{display:block;max-width:100%;max-height:calc(100vh - 40px);aspect-ratio:9/16;border-radius:12px;background:#000}',
             '.ots-instagram-video-modal__close{position:fixed;top:18px;right:18px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:#fff;color:#0c154c;font-size:29px;line-height:1;cursor:pointer}',
             '.ots-instagram-video-modal__close:focus-visible{outline:3px solid #fff;outline-offset:3px}',
+            '@media(max-width:1279px){.ots-instagram-videos__track{grid-auto-columns:calc((100% - 2 * var(--ots-video-gap))/3)}}',
             '@media(max-width:900px){.ots-instagram-videos__track{grid-auto-columns:calc((100% - var(--ots-video-gap))/2)}}',
             '@media(max-width:620px){.ots-instagram-videos{padding:28px 14px 38px}.ots-instagram-videos__head{align-items:start;flex-direction:column;gap:12px}.ots-instagram-videos__track{grid-auto-columns:82%}.ots-instagram-videos__card-title{font-size:15px}.ots-instagram-videos__controls{margin-top:14px}}',
             '@media(prefers-reduced-motion:reduce){.ots-instagram-videos__play{transition:none}}'
