@@ -4,7 +4,8 @@
     var SELECTOR = '.customer-comments';
     var STYLE_ID = 'ots-home-reviews-style';
     var DEFAULT_URL = 'https://ornekler.com.tr/js/ots/sayfalar/yorumlar.json';
-    var PAGE_SIZE = 9;
+    var INITIAL_SIZE = 15;
+    var LOAD_SIZE = 10;
     var MIN_RATE = 3;
     var state = {
         root: null,
@@ -75,7 +76,7 @@
         var style = el('style');
         style.id = STYLE_ID;
         style.textContent = [
-            '.customer-comments.ots-home-reviews{box-sizing:border-box;width:100%;max-width:1480px;margin:0 auto;padding:28px 20px 48px;color:#28333d;font-family:inherit}',
+            '.customer-comments.ots-home-reviews{box-sizing:border-box;position:relative;left:50%;width:100vw;max-width:none;margin:0 0 0 -50vw;padding:28px clamp(16px,2.5vw,48px) 48px;color:#28333d;font-family:inherit}',
             '.customer-comments.ots-home-reviews *{box-sizing:border-box}',
             '.ots-home-reviews [hidden]{display:none!important}',
             '.ots-home-reviews .ots-review-intro{position:relative;display:flex;align-items:center;justify-content:space-between;gap:32px;overflow:hidden;margin-bottom:30px;padding:36px 42px;border-radius:22px;background:radial-gradient(circle at 78% 10%,#263a78 0%,#0c154c 49%,#091136 100%);color:#fff}',
@@ -93,18 +94,18 @@
             '.ots-home-reviews .ots-review-photo{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 14px;border:1px solid #e2e5e8;border-radius:9px;background:#fff;color:#28333d;font:inherit;font-size:15px;cursor:pointer;transition:background .2s,border-color .2s}',
             '.ots-home-reviews .ots-review-photo:hover,.ots-home-reviews .ots-review-photo[aria-pressed="true"]{border-color:#288a35;background:#f1f8f2}',
             '.ots-home-reviews .ots-review-photo svg{width:19px;height:19px;flex:none;fill:currentColor}',
-            '.ots-home-reviews .ots-review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}',
-            '.ots-home-reviews .ots-review-card{min-width:0;min-height:276px;padding:26px;border:1px solid #dce5de;border-radius:20px;background:#fff;box-shadow:0 7px 25px rgba(29,48,40,.035)}',
+            '.ots-home-reviews .ots-review-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}',
+            '.ots-home-reviews .ots-review-card{min-width:0;min-height:260px;padding:20px;border:1px solid #dce5de;border-radius:18px;background:#fff;box-shadow:0 7px 25px rgba(29,48,40,.035)}',
             '.ots-home-reviews .ots-review-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}',
             '.ots-home-reviews .ots-review-person{display:flex;align-items:center;gap:10px;min-width:0}',
             '.ots-home-reviews .ots-review-person>div{min-width:0}',
-            '.ots-home-reviews .ots-review-avatar{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:50%;background:#f4f5f7;color:#9da4b0;font-size:17px;font-weight:700}',
-            '.ots-home-reviews .ots-review-author{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:700;line-height:1.25}',
-            '.ots-home-reviews .ots-review-date{display:block;margin-top:3px;color:#97a1ae;font-size:13px;line-height:1.25}',
-            '.ots-home-reviews .ots-review-rating{display:flex;align-items:center;gap:6px;flex:none;white-space:nowrap;font-size:17px;font-weight:700}',
-            '.ots-home-reviews .ots-review-stars{color:#ffa313;letter-spacing:1px;font-size:21px;line-height:1}',
+            '.ots-home-reviews .ots-review-avatar{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:#f4f5f7;color:#9da4b0;font-size:15px;font-weight:700}',
+            '.ots-home-reviews .ots-review-author{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:700;line-height:1.25}',
+            '.ots-home-reviews .ots-review-date{display:block;margin-top:3px;color:#97a1ae;font-size:12px;line-height:1.25}',
+            '.ots-home-reviews .ots-review-rating{display:flex;align-items:center;gap:5px;flex:none;white-space:nowrap;font-size:14px;font-weight:700}',
+            '.ots-home-reviews .ots-review-stars{color:#ffa313;letter-spacing:0;font-size:17px;line-height:1}',
             '.ots-home-reviews .ots-review-stars .ots-review-empty-star{color:#d8dce1}',
-            '.ots-home-reviews .ots-review-text{margin:19px 0 0;white-space:pre-line;overflow-wrap:anywhere;font-size:17px;line-height:1.65}',
+            '.ots-home-reviews .ots-review-text{margin:17px 0 0;white-space:pre-line;overflow-wrap:anywhere;font-size:15px;line-height:1.6}',
             '.ots-home-reviews .ots-review-images{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}',
             '.ots-home-reviews .ots-review-images button{display:block;width:66px;height:66px;overflow:hidden;padding:0;border:1px solid #e5e8e9;border-radius:8px;background:#fff;cursor:zoom-in}',
             '.ots-home-reviews .ots-review-images img{width:100%;height:100%;object-fit:cover}',
@@ -120,9 +121,10 @@
             '.ots-home-review-modal__image{display:block;max-width:100%;max-height:calc(100vh - 48px);object-fit:contain;border-radius:5px}',
             '.ots-home-review-modal__close{position:fixed;top:16px;right:16px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:#fff;color:#0c154c;font-size:29px;line-height:1;cursor:pointer}',
             '.ots-home-review-modal__close:focus-visible{outline:3px solid #fff;outline-offset:3px}',
-            '@media(max-width:1050px){.ots-home-reviews .ots-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}',
+            '@media(max-width:1279px){.ots-home-reviews .ots-review-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}',
+            '@media(max-width:899px){.ots-home-reviews .ots-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}',
             '@media(max-width:850px){.ots-home-reviews .ots-review-intro{align-items:flex-start;flex-direction:column;gap:24px}.ots-home-reviews .ots-review-proof{min-height:0;width:100%;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px}.ots-home-reviews .ots-review-proof-label{max-width:none;margin:0}}',
-            '@media(max-width:680px){.customer-comments.ots-home-reviews{padding:20px 14px 38px}.ots-home-reviews .ots-review-intro{gap:22px;margin-bottom:24px;padding:28px 23px;border-radius:17px}.ots-home-reviews .ots-review-intro-desc{font-size:14px}.ots-home-reviews .ots-review-count{font-size:38px}.ots-home-reviews .ots-review-grid{grid-template-columns:1fr;gap:14px}.ots-home-reviews .ots-review-card{min-height:0;padding:20px}.ots-home-reviews .ots-review-sort{min-width:0;width:52%;font-size:14px}.ots-home-reviews .ots-review-photo{font-size:14px}.ots-home-reviews .ots-review-text{font-size:16px}.ots-home-reviews .ots-review-rating{font-size:15px}.ots-home-reviews .ots-review-stars{font-size:17px}}',
+            '@media(max-width:619px){.customer-comments.ots-home-reviews{padding:20px 14px 38px}.ots-home-reviews .ots-review-intro{gap:22px;margin-bottom:24px;padding:28px 23px;border-radius:17px}.ots-home-reviews .ots-review-intro-desc{font-size:14px}.ots-home-reviews .ots-review-count{font-size:38px}.ots-home-reviews .ots-review-grid{grid-template-columns:1fr;gap:14px}.ots-home-reviews .ots-review-card{min-height:0;padding:20px}.ots-home-reviews .ots-review-sort{min-width:0;width:52%;font-size:14px}.ots-home-reviews .ots-review-photo{font-size:14px}.ots-home-reviews .ots-review-text{font-size:16px}.ots-home-reviews .ots-review-rating{font-size:15px}.ots-home-reviews .ots-review-stars{font-size:17px}}',
             '@media(prefers-reduced-motion:reduce){.ots-home-reviews .ots-review-photo,.ots-home-reviews .ots-review-more{transition:none}}'
         ].join('\n');
         document.head.appendChild(style);
@@ -235,7 +237,7 @@
     function appendPage() {
         var list = filteredReviews();
         var grid = state.root.querySelector('.ots-review-grid');
-        var end = Math.min(state.visible + PAGE_SIZE, list.length);
+        var end = Math.min(state.visible + (state.visible ? LOAD_SIZE : INITIAL_SIZE), list.length);
         for (var i = state.visible; i < end; i += 1) grid.appendChild(card(list[i]));
         state.visible = end;
         updateMore(list.length);
