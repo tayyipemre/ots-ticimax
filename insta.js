@@ -42,7 +42,7 @@
         var style = el('style');
         style.id = STYLE_ID;
         style.textContent = [
-            '.ots-instagram-videos{box-sizing:border-box;width:100%;max-width:1480px;margin:0 auto;padding:38px 20px 52px;color:#0c154c;font-family:inherit}',
+            '.ots-instagram-videos{box-sizing:border-box;position:relative;left:50%;width:100vw;max-width:none;margin:0 0 0 -50vw;padding:38px clamp(16px,2.5vw,48px) 52px;color:#0c154c;font-family:inherit}',
             '.ots-instagram-videos[hidden]{display:none!important}',
             '.ots-instagram-videos *{box-sizing:border-box}',
             '.ots-instagram-videos [hidden]{display:none!important}',
