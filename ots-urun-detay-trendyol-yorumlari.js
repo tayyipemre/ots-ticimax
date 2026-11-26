@@ -5,7 +5,7 @@
     var STYLE_ID = 'otsPdpTrendyolReviewsStyle';
     var DATA_URL = 'https://ornekler.com.tr/js/ots/sayfalar/yorumlar.json';
     var SCRIPT_URL = document.currentScript && document.currentScript.getAttribute('data-reviews-url');
-    var PAGE_SIZE = 3;
+    var PAGE_SIZE = 4;
     var MIN_RATE = 3;
 
     function element(tag, className, text) {
@@ -58,20 +58,20 @@
             '#'+ROOT_ID+' [hidden]{display:none!important}',
             '#'+ROOT_ID+' .ots-pdp-reviews-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:0 0 18px;padding:0 0 15px;border-bottom:1px solid #e2e6eb}',
             '#'+ROOT_ID+' .ots-pdp-reviews-eyebrow{display:block;margin:0 0 5px;color:#0c154c;font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}',
-            '#'+ROOT_ID+' h2{margin:0;color:#0c154c;font-size:clamp(19px,2vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.3}',
-            '#'+ROOT_ID+' .ots-pdp-reviews-meta{display:block;margin:0;color:#778390;font-size:12px;line-height:1.4;text-align:right}',
-            '#'+ROOT_ID+' .ots-pdp-reviews-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px}',
-            '#'+ROOT_ID+' .ots-pdp-review{min-width:0;padding:20px 22px;border:1px solid #e2e6eb;border-radius:12px;background:#fff}',
+            '#'+ROOT_ID+' h2{margin:0;color:#0c154c;font-size:clamp(18px,1.8vw,22px);font-weight:500;letter-spacing:-.025em;line-height:1.3}',
+            '#'+ROOT_ID+' .ots-pdp-reviews-meta{display:block;margin:0;color:#778390;font-size:11px;line-height:1.4;text-align:right}',
+            '#'+ROOT_ID+' .ots-pdp-reviews-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}',
+            '#'+ROOT_ID+' .ots-pdp-review{min-width:0;padding:17px 18px;border:1px solid #e2e6eb;border-radius:12px;background:#fff}',
             '#'+ROOT_ID+' .ots-pdp-review-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}',
-            '#'+ROOT_ID+' .ots-pdp-review-stars{color:#f6a317;font-size:16px;letter-spacing:2px;line-height:1;white-space:nowrap}',
+            '#'+ROOT_ID+' .ots-pdp-review-stars{color:#f6a317;font-size:14px;letter-spacing:1px;line-height:1;white-space:nowrap}',
             '#'+ROOT_ID+' .ots-pdp-review-stars span{color:#d9dde3}',
-            '#'+ROOT_ID+' .ots-pdp-review-date{color:#8b95a2;font-size:12px;white-space:nowrap}',
-            '#'+ROOT_ID+' .ots-pdp-review-text{margin:0;color:#2c3540;font-size:15px;line-height:1.65;overflow-wrap:anywhere}',
-            '#'+ROOT_ID+' .ots-pdp-review-author{display:block;margin-top:14px;color:#667381;font-size:12px;font-weight:600}',
+            '#'+ROOT_ID+' .ots-pdp-review-date{color:#8b95a2;font-size:11px;white-space:nowrap}',
+            '#'+ROOT_ID+' .ots-pdp-review-text{margin:0;color:#2c3540;font-size:13px;line-height:1.6;overflow-wrap:anywhere}',
+            '#'+ROOT_ID+' .ots-pdp-review-author{display:block;margin-top:12px;color:#667381;font-size:11px;font-weight:600}',
             '#'+ROOT_ID+' .ots-pdp-review-images{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}',
             '#'+ROOT_ID+' .ots-pdp-review-images button{display:block;width:56px;height:56px;overflow:hidden;padding:0;border:1px solid #e2e6eb;border-radius:7px;background:#fff;cursor:zoom-in}',
             '#'+ROOT_ID+' .ots-pdp-review-images img{display:block;width:100%;height:100%;object-fit:cover}',
-            '#'+ROOT_ID+' .ots-pdp-reviews-more{display:block;margin:17px auto 0;padding:8px 4px;border:0;border-bottom:1px solid #0c154c;background:transparent;color:#0c154c;font:inherit;font-size:13px;font-weight:600;cursor:pointer}',
+            '#'+ROOT_ID+' .ots-pdp-reviews-more{display:block;margin:17px auto 0;padding:8px 4px;border:0;border-bottom:1px solid #0c154c;background:transparent;color:#0c154c;font:inherit;font-size:12px;font-weight:600;cursor:pointer}',
             '#'+ROOT_ID+' .ots-pdp-reviews-more:hover{color:#224492;border-color:#224492}',
             '#'+ROOT_ID+' .ots-pdp-reviews-more:focus-visible,#'+ROOT_ID+' .ots-pdp-review-images button:focus-visible{outline:2px solid #0c154c;outline-offset:3px}',
             '.ots-pdp-review-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;overflow:auto;padding:24px;background:rgba(7,14,38,.89)}',
@@ -79,7 +79,8 @@
             '.ots-pdp-review-modal__image{display:block;max-width:100%;max-height:calc(100vh - 48px);object-fit:contain;border-radius:5px}',
             '.ots-pdp-review-modal__close{position:fixed;top:16px;right:16px;display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:#fff;color:#0c154c;font-size:29px;line-height:1;cursor:pointer}',
             '.ots-pdp-review-modal__close:focus-visible{outline:3px solid #fff;outline-offset:3px}',
-            '@media(max-width:640px){#'+ROOT_ID+'{padding:0 14px;margin:22px auto 30px}#'+ROOT_ID+' .ots-pdp-reviews-head{align-items:flex-start;flex-direction:column;gap:5px}#'+ROOT_ID+' .ots-pdp-reviews-meta{text-align:left}#'+ROOT_ID+' .ots-pdp-review{padding:17px 18px}}'
+            '@media(max-width:1050px){#'+ROOT_ID+' .ots-pdp-reviews-list{grid-template-columns:repeat(2,minmax(0,1fr))}}',
+            '@media(max-width:640px){#'+ROOT_ID+'{padding:0 14px;margin:22px auto 30px}#'+ROOT_ID+' .ots-pdp-reviews-head{align-items:flex-start;flex-direction:column;gap:5px}#'+ROOT_ID+' .ots-pdp-reviews-meta{text-align:left}#'+ROOT_ID+' .ots-pdp-reviews-list{grid-template-columns:1fr}#'+ROOT_ID+' .ots-pdp-review{padding:16px}}'
         ].join('\n');
         document.head.appendChild(style);
     }
