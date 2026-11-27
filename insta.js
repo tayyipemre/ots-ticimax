@@ -4,7 +4,7 @@
     var SELECTOR = '.ots-instagram-videos';
     var STYLE_ID = 'otsInstagramVideosStyle';
     var HIGHLIGHT_URL = 'https://www.instagram.com/stories/highlights/17994209442115512/';
-    var MANIFEST_URL = 'https://cdn.jsdelivr.net/gh/tayyipemre/ots-ticimax@d5292b6/ots-instagram-videolari.json';
+    var MANIFEST_URL = 'https://cdn.jsdelivr.net/gh/tayyipemre/ots-ticimax@b1e3605/ots-instagram-videolari.json';
     var cleanupArrows = null;
 
     function el(tag, className, text) {
